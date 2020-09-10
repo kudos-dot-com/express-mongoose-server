@@ -1,9 +1,7 @@
 const mongoClient=require("mongodb").MongoClient;
 const assert = require("assert");
+const oper=require("./operations");
 
-/*const url='mongodb://localhost:27017/';
-const dbname='mailingList';
-*/
 mongoClient.connect(' mongodb://localhost:27017/',(err,client)=>{
 
 assert.equal(err,null);
@@ -11,26 +9,30 @@ assert.equal(err,null);
 console.log("connnected to database");
 
 const db=client.db('mailingList');
-const collection=db.collection('users');
 
-collection.insertOne({"name":"rajarshi","email":"rajarshi@gmail.com"},(err,result)=>{
-    assert.equal(err,null);
+oper.insertDoc(db,{"name":"jennifer","email":"jenifer2133@gamil.com"},'users',(result)=>{
+   
+    console.log("inserted doc\n",result.ops);
 
-    console.log("after insert:\n");
+    oper.findDoc(db,'users',(docs)=>{
+    console.log("documents\n",docs);
 
-    console.log(result.ops);
+    oper.updateDoc(db,{name:"jennifer"},{email:"great escape"},'users',(result)=>{
+        console.log("updates:/n",result.result);
+        oper.findDoc(db,'users',(docs)=>{
+            console.log("newly updated documents\n",docs);
+        
+            db.dropCollection('mailingLIst',(result)=>{
+                console.log("dropped collection:",result);
 
-    collection.find({}).toArray((err,docs)=>{
-        assert.equal(err,null);
+                client.close();
+            });
+        });        
 
-        console.log('found:\n');
-        console.log(docs);
 
-        db.dropCollection('mailingList',(err,result)=>{
-            assert.equal(err,null);
-            
-            client.close();
-        });
+    });
     });
 });
+
+
 });
