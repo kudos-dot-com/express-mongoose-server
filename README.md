@@ -7,3 +7,4 @@ performs crud operations and basic authentication,
 
 database used mongodb
 
+#added authentication using passport
