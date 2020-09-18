@@ -3,11 +3,13 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
+var passport=require('passport');
+var authenticate=require('./auth');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var dishRouter = require('./routes/dishrouter');
-
+var session=require('express-session');
+var fileStore=require('session-file-store')(session);
 const mongoose=require('mongoose');
 const Dishes=require('./models/dishes');
 
@@ -15,7 +17,7 @@ const url='mongodb://localhost:27017/mailingList';
  const connect=mongoose.connect(url);
  
  connect.then((db)=>{
-     console.log("connected");
+     console.log("connected to the database");
  },((err)=>{console.log(err)}));
 
 var app = express();
@@ -26,45 +28,65 @@ app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+//app.use(cookieParser());
 
-function auth(req,res,next){
-console.log(req.headers);
 
-var authHead=req.headers.authorization;
+app.use(session({
+  name:'session_id',
+  secret:'12345-33323-11112-33039',
+  saveUninitialized:false,
+  resave:false,
+  store:new fileStore()
+}));
 
-if(!authHead)
-{
-  var err=new Error("you are not authenticated");
 
-  res.setHeader('WWW-Authenticate','Basic');
-  err.status=401;
-  return next(err);
-}
-var auth=new Buffer(authHead.split(' ')[1],'base64').toString().split(':');
-var user=auth[0];
-var pass=auth[1];
 
-if(user==='admin' && pass==="pass"){
-  next();
-}
-else{
-  var err=new Error("enter correct password");
-
-  res.setHeader('www-Authenticate','Basic');
-  err.status=401;
-  return next(err);
-}
-
-}
-
-app.use(auth);
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+function auth(req,res,next){
+if(!req.user)
+{
+  var err=new Error("either password or username is incorrect");
+  err.status=403;
+  return next(err);
+}
+else{
+ next();
+
+}
+}
+
+/*function auth (req, res, next) {
+  console.log(req.session);
+
+if(!req.session.user) {
+    var err = new Error('You are not authenticated!');
+    err.status = 403;
+    return next(err);
+}
+else {
+  if (req.session.user === 'authenticated') {
+    next();
+  }
+  else {
+    var err = new Error('You are not authenticated!');
+    err.status = 403;
+    return next(err);
+  }
+}
+}
+
+*/
+app.use(auth);
+app.use(express.static(path.join(__dirname, 'public')));
+
+
 app.use('/dishes',dishRouter);
 // catch 404 and forward to error handler
+
 app.use(function(req, res, next) {
   next(createError(404));
 });
