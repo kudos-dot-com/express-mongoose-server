@@ -12,8 +12,9 @@ var session=require('express-session');
 var fileStore=require('session-file-store')(session);
 const mongoose=require('mongoose');
 const Dishes=require('./models/dishes');
+const config=require('./config');
 
-const url='mongodb://localhost:27017/mailingList';
+const url=config.mongoUrl;//'mongodb://localhost:27017/mailingList';
  const connect=mongoose.connect(url);
  
  connect.then((db)=>{
@@ -30,7 +31,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 //app.use(cookieParser());
 
-
+/* used  in case  of sessions
 app.use(session({
   name:'session_id',
   secret:'12345-33323-11112-33039',
@@ -38,14 +39,16 @@ app.use(session({
   resave:false,
   store:new fileStore()
 }));
+*/
 
 
 
 app.use(passport.initialize());
-app.use(passport.session());
+//app.use(passport.session());//used in case of sessions
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+/*used with local authentication
 function auth(req,res,next){
 if(!req.user)
 {
@@ -57,7 +60,7 @@ else{
  next();
 
 }
-}
+}*/
 
 /*function auth (req, res, next) {
   console.log(req.session);
@@ -80,7 +83,7 @@ else {
 }
 
 */
-app.use(auth);
+//app.use(auth);
 app.use(express.static(path.join(__dirname, 'public')));
 
 

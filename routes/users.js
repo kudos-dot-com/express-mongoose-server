@@ -3,13 +3,13 @@ var router = express.Router();
 var user=require('../models/user');
 var passport =require('passport');
 var bodyParser=require('body-parser');
-
+var authenticate=require('../auth');
 router.use(bodyParser.json());
 
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+  res.send('respond with a resource,this is users end point');
 });
 
 router.post('/signup',(req,res,next)=>{
@@ -34,9 +34,10 @@ else
 });
 
 router.post('/login',passport.authenticate('local'),(req,res,next)=>{
-  res.statusCode=200;
+    var token=authenticate.gettoken({_id:req.user._id});
+    res.statusCode=200;
     res.setHeader('content-type','application/json');
-    res.json({status:'you are registered and logged in', success:true});
+    res.json({status:'you are registered and logged in',token:token, success:true});
 
 });
 
