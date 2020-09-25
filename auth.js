@@ -11,7 +11,7 @@ exports.local=passport.use(new localStrategy(user.authenticate()));
 passport.serializeUser(user.serializeUser());
 passport.deserializeUser(user.deserializeUser());
 
-exports.gettoken=function(user){
+/*exports.gettoken=function(user){
     return jwt.sign(user,'12345-67891-56789-54321',
         {expiresIn:3600});
 };
@@ -35,4 +35,4 @@ exports.jwtPassport=passport.use(new jwtStrategy(opts,(jwtPayload,done)=>{
         }
     });
 }));
-exports.verifyUser=passport.authenticate('jwt',{session:false});
+exports.verifyUser=passport.authenticate('jwt',{session:false});*/

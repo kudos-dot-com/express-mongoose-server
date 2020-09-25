@@ -8,6 +8,7 @@ var authenticate=require('./auth');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var dishRouter = require('./routes/dishrouter');
+var uploadrouter=require('./routes/upload');
 var session=require('express-session');
 var fileStore=require('session-file-store')(session);
 const mongoose=require('mongoose');
@@ -31,7 +32,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 //app.use(cookieParser());
 
-/* used  in case  of sessions
+// used  in case  of sessions
 app.use(session({
   name:'session_id',
   secret:'12345-33323-11112-33039',
@@ -39,16 +40,16 @@ app.use(session({
   resave:false,
   store:new fileStore()
 }));
-*/
+
 
 
 
 app.use(passport.initialize());
-//app.use(passport.session());//used in case of sessions
+app.use(passport.session());//used in case of sessions
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-/*used with local authentication
+//used with local authentication
 function auth(req,res,next){
 if(!req.user)
 {
@@ -60,7 +61,7 @@ else{
  next();
 
 }
-}*/
+}
 
 /*function auth (req, res, next) {
   console.log(req.session);
@@ -83,11 +84,12 @@ else {
 }
 
 */
-//app.use(auth);
+app.use(auth);
 app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.use('/dishes',dishRouter);
+app.use('/imageUpload',uploadrouter);
 // catch 404 and forward to error handler
 
 app.use(function(req, res, next) {

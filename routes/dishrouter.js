@@ -23,7 +23,7 @@ dishRouter.route('/')
     },(err)=>next(err))
     .catch((err)=>next(err))
 })
-.post(auth.verifyUser,(req,res,next)=>{
+.post(/*auth.verifyUser,*/(req,res,next)=>{
    Dishes.create(req.body)
    .then((dish)=>{
     res.statusCode=200;
@@ -33,13 +33,24 @@ dishRouter.route('/')
     },(err)=>next(err))
     .catch((err)=>next(err))
 })
-.put(auth.verifyUser,(req,res,next)=>{
+.put((req,res,next)=>{
     res.statusCode=403;
     res.end("cannot parse this request");
    
 })
-.delete(auth.verifyUser,(req,res,next)=>{
-   res.end("deleteing all the dishes");
+.delete((req,res,next)=>{
+    res.end("deleteing all the dishes");
+    res.statusCode=200;
+    /*Dishes.deleteOne({name:'raj'},(err,response)=>{
+    if(err){
+   
+    res.json({status:false,message:"error"});
+    }
+    else{
+    //res.statusCode=200;
+    res.json({status:true,message:"deleted"});
+    }
+   });*/
 });
 
 module.exports=dishRouter;

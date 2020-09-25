@@ -34,10 +34,10 @@ else
 });
 
 router.post('/login',passport.authenticate('local'),(req,res,next)=>{
-    var token=authenticate.gettoken({_id:req.user._id});
+   // var token=authenticate.gettoken({_id:req.user._id});
     res.statusCode=200;
     res.setHeader('content-type','application/json');
-    res.json({status:'you are registered and logged in',token:token, success:true});
+    res.json({status:'you are registered and logged in', success:true});
 
 });
 
